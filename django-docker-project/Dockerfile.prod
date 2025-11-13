@@ -1,0 +1,28 @@
+# -------------------------------
+# Dockerfile.prod - Ambiente de Produção
+# -------------------------------
+FROM python:3.11-slim
+
+# Define diretório de trabalho dentro do container
+WORKDIR /app
+
+# Copia arquivos necessários
+COPY ./app /app
+COPY requirements.txt /app/
+COPY init.sh /app/init.sh
+
+
+RUN chmod +x /app/init.sh
+
+# Instala dependências (sem cache pra reduzir tamanho)
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Cria usuário não-root por segurança
+RUN adduser --disabled-password --gecos '' django_user
+USER django_user
+
+# Expõe porta padrão do Django
+EXPOSE 8000
+
+# Comando padrão: executar o script de inicialização
+CMD ["./init.sh"]
