@@ -1,0 +1,19 @@
+# Usar Fedora como imagem base
+FROM fedora:latest
+
+# Definir diretório de trabalho
+WORKDIR /app
+
+# Atualizar sistema e instalar dependências
+RUN dnf update -y && \
+    dnf install -y fish python3 python3-pip python3-devel gcc sqlite && \
+    dnf clean all
+
+# Instalar Django
+RUN pip3 install Django==4.2.7
+
+# Expor porta 8000
+EXPOSE 8000
+
+# Comando padrão
+CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
